@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  backend:
+    build: .
+    container_name: app_backend
+    volumes:
+      - ./:/var/www/html
+      - /var/www/html/node_modules
+    environment:
+      - PORT=${BACKEND_PORT}
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    tty: true
+    restart: unless-stopped
+    networks: 
+      - app
+  
+  database:
+    image: mongo:4.0.5-xenial
+    container_name: app_database
+    volumes:
+      - db:/data/db
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    expose:
+      - ${DATABASE_PORT}
+    command: mongod --port ${DATABASE_PORT}
+    tty: true
+    restart: unless-stopped
+    networks: 
+      - app
+
+volumes:
+  db:
+
+networks:
+  app:
